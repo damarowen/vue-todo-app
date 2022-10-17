@@ -28,8 +28,8 @@ yarn lint
 
 ### PR
 ```
-create local storeage for save data
-user bisa enter buat input
+create local storeage for save data DONE
+user bisa enter buat input DONE
 edit lansung di td nya name
 ```
 
