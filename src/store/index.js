@@ -38,5 +38,15 @@ export default createStore({
             localStorage.setItem("TASKS", JSON.stringify(newData));
             state.tasks = JSON.parse(localStorage.getItem("TASKS"));
         },
+        EDIT_TASK(state, obj) {
+            console.log(obj,"objss")
+            let statusData = JSON.parse(localStorage.getItem("TASKS"))[obj.index].status
+            state.tasks[obj.index].name = obj.input;
+            state.tasks[obj.index].status =statusData;
+            let newData = state.tasks;
+            localStorage.setItem("TASKS", JSON.stringify(newData));
+            state.tasks = JSON.parse(localStorage.getItem("TASKS"));
+        },
+
     },
 })

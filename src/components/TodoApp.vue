@@ -28,10 +28,21 @@
         </tr>
       </thead>
       <!-- v-for is for loop in vue, :key is index  -->
-      <tbody>
-        <tr v-for="(task, index) in $store.state.tasks" :key="index">
+      <tbody  v-for="(task, index) in $store.state.tasks" :key="index">
+        <tr>
           <td>
-            <span :class="{ 'line-through': task.status === 'finished' }">
+            <!-- if status edit -->
+            <span v-if="task.status === 'edit'" :class="{ 'line-through': task.status === 'finished' }">
+                <input
+              type="text"
+              class="w-100 form-control"
+              v-model="inputTaskEdit"
+              v-on:keyup.enter="onEnter"
+              autofocus
+            />
+            </span>
+            <!-- else -->
+            <span v-else :class="{ 'line-through': task.status === 'finished' }">
               {{ task.name }}
             </span>
           </td>
@@ -49,12 +60,12 @@
               {{ capitalizeFirstChar(task.status) }}
             </span>
           </td>
-          <td class="text-center">
+          <td v-if="task.status !== 'edit'" class="text-center">
             <div @click="deleteTask(index)">
               <span class="fa fa-trash pointer"></span>
             </div>
           </td>
-          <td class="text-center">
+          <td v-if="task.status !== 'edit'" class="text-center">
             <div @click="editTask(index)">
               <p class="fa fa-pen pointer"></p>
             </div>
@@ -91,17 +102,27 @@ export default {
     }
     return {
       inputTaskBinding: "",
+      inputTaskEdit: "",
       editedTask: null,
-      //*TASKS WILL GET FROM LOCAL STORAGE FIRST
     };
   },
   methods: {
     submitTask() {
-      if (this.inputTaskBinding.length === 0) return;
+
+      if (this.inputTaskBinding.length === 0 && this.editedTask == null) return;
       /* We need to update the task */
       if (this.editedTask != null) {
+        //balikin data setelah di edit
+        console.log(JSON.parse(localStorage.getItem("TASKS")))
+
+        this.$store.state.tasks  = JSON.parse(localStorage.getItem("TASKS"))
+
         //* replace edited task
-        this.$store.state.tasks[this.editedTask].name = this.inputTaskBinding;
+        let obj = {
+          index: this.editedTask,
+          input: this.inputTaskEdit
+        }
+        this.$store.commit("EDIT_TASK",obj);
         this.editedTask = null;
       } else {
         /* We need to add new task */
@@ -114,7 +135,9 @@ export default {
       this.$store.commit("DELETE_TASK", index);
     },
     editTask(index) {
-      this.inputTaskBinding = this.$store.state.tasks[index].name;
+      this.inputTaskEdit = this.$store.state.tasks[index].name;
+      this.$store.state.tasks[index].status = "edit"
+      this.$store.state.tasks =  this.$store.state.tasks.splice(index, 1) //set focus on edit task only
       this.editedTask = index;
     },
     changeStatus(index) {

@@ -30,7 +30,7 @@ yarn lint
 ```
 create local storeage for save data DONE
 user bisa enter buat input DONE
-edit lansung di td nya name
+edit lansung di td nya name DONE
 ```
 
 
